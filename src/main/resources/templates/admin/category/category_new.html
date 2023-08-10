@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update person</title>
+</head>
+<body>
+
+<form th:method="POST" th:action="@{/admin/categories/new}" th:object="${category}">
+    <label for="name">Type Category Name: </label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">error</div>
+    <br/>
+    <label for="parent.id">Type parent id: </label>
+    <input type="text" th:field="*{parent.id}" id="parent.id"/>
+    <div style="color:red" th:if="${#fields.hasErrors('parent')}" th:errors="*{parent}">error</div>
+    <br/>
+    <label for="imageURL">Type imageurl: </label>
+    <input type="text" th:field="*{imageURL}" id="imageURL"/>
+    <div style="color:red" th:if="${#fields.hasErrors('imageURL')}" th:errors="*{imageURL}">error</div>
+    <br/>
+
+    <input type="submit" value="Update!"/>
+
+</form>
+
+</body>
+</html>

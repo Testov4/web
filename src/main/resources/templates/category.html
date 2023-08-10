@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:replace="blocks/fragments :: head('Category - SENKO', 'none')"></head>
+<body class="d-flex flex-column min-vh-100">
+<div th:insert="~{blocks/fragments :: scripts}"></div>
+<div th:replace="blocks/fragments :: navbar"></div>
+
+<div class="container-fluid">
+    <div>
+        <h4 class="text-center mb-4 mt-4" style="font-weight: 400;">[[#{category.title}]]</h4>
+    </div>
+    <div class="row">
+        <div class="col" th:each="cat : ${listCategories}">
+            <a th:href="@{'/category/'+ ${cat.id}}">
+                <div class="text-center zoom">
+                    <img style="-webkit-filter: drop-shadow(3px 3px 3px #222); filter: drop-shadow(3px 3px 3px #222);
+                     width: 140px; height: 140px;"
+                         th:src="'/category-images/'+${cat.imageURL}"/>
+                </div>
+                <div class="category_label text-center mt-4">[[${cat.name}]]</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="text-center mb-4">
+    <div class="row wow faceIn">
+        <th:block th:each="product : ${listProducts}">
+            <div class="col-6 col-sm-6 col-md-3 my-3 mb-4">
+                <div class="card">
+                    <a th:href="@{'/product/'+${product.id}}">
+                        <div class="view overlay">
+                            <img class="card-img-100"
+                                 th:src="'/product-images/'+${product.imageURL}"/>
+                            <div class="mask rgba-white-slight"></div>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="grey-text">
+                                <h5>[[${product.name}]]</h5>
+                            </div>
+                            <h5 class="font-weight-bold blue-text">
+                                <strong>
+                                    [[${product.price}]] &#8381;
+                                </strong>
+                            </h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </th:block>
+    </div>
+
+</section>
+
+<footer th:insert="~{blocks/fragments :: footer}"></footer>
+</body>
+</html>
