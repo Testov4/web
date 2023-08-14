@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/basket")
 @RequiredArgsConstructor
+@RequestMapping("/basket")
 @Slf4j
 public class CartController {
 
