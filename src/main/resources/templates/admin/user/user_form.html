@@ -108,9 +108,9 @@
         $.post(url, params, function (response) {
             if (response == "OK") {
                 form.submit();
-            } else if (response == "Duplicate Username") {
+            } else if (response == "DUPLICATE_USERNAME") {
                 showWarningModal("There is another user with login: " + userLogin)
-            } else if (response == "Duplicate Email") {
+            } else if (response == "DUPLICATE_EMAIL") {
                 showWarningModal("There is another user with email: " + email)
             } else {
                 showErrorModal("Unknown response from server")

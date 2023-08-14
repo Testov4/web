@@ -1,7 +1,6 @@
 package eshop.web.configuration;
 
-import eshop.web.security.MyUserDetails;
-import eshop.web.services.MyUserDetailsService;
+import eshop.web.service.UserDetailsService;
 import eshop.web.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +16,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
-    private final MyUserDetailsService myUserDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public WebSecurityConfig(MyUserDetailsService myUserDetailsService) {
-        this.myUserDetailsService = myUserDetailsService;
+    public WebSecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     //@Autowired
@@ -38,23 +37,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 //        http.csrf().disable().authorizeRequests()
         http.authorizeRequests().antMatchers("/admin/**").hasAuthority(Role.ADMIN.getAuthority())
-                .antMatchers("/js/**", "/css/**", "/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
-                .permitAll()
-                .and()
-                .logout().logoutSuccessUrl("/")
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll().and().exceptionHandling()
-                .accessDeniedPage("/error403");
+            .antMatchers("/js/**", "/css/**", "/**").permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .formLogin()
+            .loginPage("/login")
+            .loginProcessingUrl("/login")
+            .defaultSuccessUrl("/", true)
+            .permitAll()
+            .and()
+            .logout().logoutSuccessUrl("/")
+            .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll().and().exceptionHandling()
+            .accessDeniedPage("/error403");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(myUserDetailsService).passwordEncoder(getPasswordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
     }
 
     @Bean
