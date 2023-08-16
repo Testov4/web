@@ -1,0 +1,11 @@
+spring.datasource.driverClassName=
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+
+spring.liquibase.change-log=
+
+spring.jpa.properties.hibernate.dialect=
+
+spring.messages.basename=messages
+spring.messages.encoding=UTF-8

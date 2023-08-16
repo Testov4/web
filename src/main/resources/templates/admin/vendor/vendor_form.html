@@ -50,9 +50,9 @@
         params = {id: vendorID, title: vendorTitle, _csrf: csrfValue};
 
         $.post(url, params, function (response) {
-            if (response == "OK") {
+            if (response == true) {
                 form.submit();
-            } else if (response == "Duplicate") {
+            } else if (response == false) {
                 showWarningModal("There is another category with vendor: " + vendorTitle)
             } else {
                 showErrorModal("Unknown response from server")
