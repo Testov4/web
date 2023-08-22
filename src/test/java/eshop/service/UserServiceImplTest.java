@@ -49,7 +49,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldFindOldPassportWhenNewOneIsEmpty() {
+    public void encodePassword_shouldFindOldPassport_whenNewOneIsEmpty() {
         users.get(0).setPassword("oldEncodedPassword");
         User user = copyUser(users.get(0));
         user.setPassword("");
@@ -69,7 +69,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldEncodeNewPassword() {
+    public void encodePassword_shouldEncodeNewPassword() {
         users.get(0).setPassword("encoded");
         User user = copyUser(users.get(0));
         user.setPassword("newPassword");
@@ -89,7 +89,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldThrowWhenUserIsNotFound() {
+    public void encodePassword_shouldThrow_whenUserIsNotFound() {
         User user = new User();
         UUID id = UUID.randomUUID();
         user.setId(id);
@@ -104,7 +104,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldReturnOkWhenEverythingStaysSame() {
+    public void isLoginAndEmailUnique_shouldReturnOk_whenEverythingStaysSame() {
         User user = copyUser(users.get(0));
         UUID id = user.getId();
         String username = user.getUsername();
@@ -127,7 +127,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldReturnOkUsernameAndEmailIsUnique() {
+    public void isLoginAndEmailUnique_shouldReturnOk_whenUsernameAndEmailIsUnique() {
         User user = copyUser(users.get(0));
         UUID id = user.getId();
         String username = "new_name";
@@ -150,7 +150,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldReturnDuplicateUsername() {
+    public void isLoginAndEmailUnique_shouldReturnDuplicateUsername() {
         User user = copyUser(users.get(0));
         UUID id = null;
         String username = user.getUsername();
@@ -173,7 +173,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldReturnDuplicateEmail() {
+    public void isLoginAndEmailUnique_shouldReturnDuplicateEmail() {
         User user = copyUser(users.get(0));
         UUID id = UUID.randomUUID();
         String username =  "new_name";
@@ -196,7 +196,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldReturnDuplicateEmailWithOldUsernameAndNewNotUniqueEmail() {
+    public void isLoginAndEmailUnique_shouldReturnDuplicateEmail_whenOldUsernameAndNewNotUniqueEmail() {
         User user = copyUser(users.get(0));
         UUID id = user.getId();
         String username =  user.getUsername();
@@ -219,7 +219,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void shouldReturnDuplicateUsernameWithOldEmailAndNewNotUniqueUsername() {
+    public void isLoginAndEmailUnique_shouldReturnDuplicateUsername_whenOldEmailAndNewNotUniqueUsername() {
         User user = copyUser(users.get(0));
         UUID id = user.getId();
         String username =  users.get(1).getUsername();

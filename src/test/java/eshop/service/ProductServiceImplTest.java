@@ -59,7 +59,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void shouldReturnTrueWhenNameIsNotFound() {
+    public void isProductUnique_shouldReturnTrue_whenNameIsNotFound() {
         UUID id = UUID.randomUUID();
         String name = "wrong_test_name";
 
@@ -72,7 +72,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void shouldReturnTrueWhenNameIsAlreadyInListButSameId() {
+    public void isProductUnique_shouldReturnTrue_whenNameIsAlreadyInListButSameId() {
         UUID id = products.get(0).getId();
         String name = products.get(0).getName();
 
@@ -88,7 +88,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void shouldReturnFalseWhenNameIsAlreadyInListAndRandomId() {
+    public void isProductUnique_shouldReturnFalse_whenNameIsAlreadyInListAndRandomId() {
         UUID id = UUID.randomUUID();
         String name = products.get(0).getName();
 
@@ -104,7 +104,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfNameNotContains() {
+    public void findByCategoryAndNameContaining_shouldReturnEmptyList_WhenNameNotContains() {
         String name = "wrong";
         Category category = products.get(0).getCategory();
 
@@ -120,7 +120,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfNotCorrectCategoryPassed() {
+    public void findByCategoryAndNameContaining_shouldReturnEmptyList_whenNotCorrectCategoryPassed() {
         String name = "test";
         Category category = Category.builder().name("wrong_category").build();
 
@@ -136,7 +136,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfCategoryIsNull() {
+    public void findByCategoryAndNameContaining_shouldReturnEmptyList_whenCategoryIsNull() {
         String name = "test";
         Category category = null;
 
@@ -152,7 +152,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void shouldReturnCorrectProducts() {
+    public void findByCategoryAndNameContaining_shouldReturnCorrectProducts() {
         String name = "test";
         Category category = products.get(0).getCategory();
 
