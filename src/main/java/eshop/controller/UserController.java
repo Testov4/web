@@ -3,7 +3,7 @@ package eshop.controller;
 import eshop.service.OrderService;
 import eshop.service.UserService;
 import eshop.model.User;
-import eshop.util.UserNotFoundException;
+import eshop.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

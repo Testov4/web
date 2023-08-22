@@ -1,12 +1,12 @@
 package eshop.model;
 
+import eshop.util.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -40,7 +40,7 @@ public class Order {
     private Integer quantity;
 
     @Column(name = "final_price")
-    private Double finalPrice;
+    private Long finalPrice;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")

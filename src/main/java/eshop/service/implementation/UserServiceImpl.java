@@ -6,7 +6,7 @@ import eshop.service.UserService;
 import eshop.model.User;
 import eshop.model.UserInformation;
 import eshop.util.UniqueStatus;
-import eshop.util.UserNotFoundException;
+import eshop.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -46,9 +47,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void saveUser(User user) {
         log.info("saving user: {}", user);
-        assignUserInformationIfPresent(user);
+        user = assignUserInformationIfPresent(user);
         userRepository.save(user);
     }
 
@@ -94,19 +94,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return userRepository.findByUsername(authentication.getName()).
-            orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userRepository.findByUsername(authentication.getName())
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Override
     public UniqueStatus isLoginAndEmailUnique(UUID id, String username, String email) {
         log.info("checking if user is unique for name: {} and email: {} and ID: {}", username, email, id);
         boolean isUsernameUnique = userRepository.findByUsername(username)
-            .map(user -> user.getId().equals(id))
-            .orElse(true);
+            .filter(user -> !user.getId().equals(id))
+            .isEmpty();
         boolean isEmailUnique = userRepository.findByEmail(email)
-            .map(user -> user.getId().equals(id))
-            .orElse(true);
+            .filter(user -> !user.getId().equals(id))
+            .isEmpty();
 
         if (!isUsernameUnique) {
             log.info("user is not unique, found another user with the same username: {}", username);
@@ -122,20 +122,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void copyFromNewUserInfoToCurrent(User user, UserInformation userInformation) {
-        log.info("connecting user information with user {} {}", user, userInformation);
+        log.info("copying user information from user {} {}", user, userInformation);
         user.getUserInformation().setName(userInformation.getName());
         user.getUserInformation().setSurname(userInformation.getSurname());
         user.getUserInformation().setPhone(userInformation.getPhone());
         user.getUserInformation().setAddress(userInformation.getAddress());
-        log.info("connected: {}", user);
+        log.info("copied: {}", user);
     }
 
-    private void assignUserInformationIfPresent(User user) {
+    private User assignUserInformationIfPresent(User user) {
         userInformationRepository.findByUser(user).ifPresent(i -> {
             UserInformation newInformation = user.getUserInformation();
             user.setUserInformation(i);
             copyFromNewUserInfoToCurrent(user, newInformation);
         });
+        return user;
     }
 
 }

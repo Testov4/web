@@ -3,8 +3,7 @@ package eshop.service;
 import eshop.model.Order;
 import eshop.model.Product;
 import eshop.model.User;
-import eshop.util.OrderNotFoundException;
-
+import eshop.exception.OrderNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +14,7 @@ public interface OrderService {
 
     void saveOrder(Order order);
 
-    Order buildNewOrder(User user, Product product, String address, Integer quantity);
+    Order buildOrder(User user, Product product, String address, Integer quantity);
 
     void deleteOrder(Order order) ;
 
@@ -23,5 +22,5 @@ public interface OrderService {
 
     List<Order> findOrdersForBasket(User user);
 
-    void changeOrdersStatus(List<Order> orders);
+    void changeOrdersStatusAndSave(List<Order> orders);
 }

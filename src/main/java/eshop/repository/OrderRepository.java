@@ -1,7 +1,7 @@
 package eshop.repository;
 
 import eshop.model.Order;
-import eshop.model.OrderStatus;
+import eshop.util.OrderStatus;
 import eshop.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

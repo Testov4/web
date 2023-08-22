@@ -3,7 +3,7 @@ package eshop.service.implementation;
 import eshop.model.Category;
 import eshop.repository.CategoryRepository;
 import eshop.service.CategoryService;
-import eshop.util.CategoryNotFoundException;
+import eshop.exception.CategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> findSubCategoriesByParentId(UUID id) throws CategoryNotFoundException {
+    public List<Category> findSubCategoriesByParentId(UUID id) {
         return categoryRepository.findByParent(categoryRepository.findById(id)
             .orElseThrow(() -> new CategoryNotFoundException("Category not found")));
     }

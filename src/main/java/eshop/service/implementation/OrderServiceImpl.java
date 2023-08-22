@@ -1,12 +1,12 @@
 package eshop.service.implementation;
 
 import eshop.model.Order;
-import eshop.model.OrderStatus;
+import eshop.util.OrderStatus;
 import eshop.model.Product;
 import eshop.model.User;
 import eshop.repository.OrderRepository;
 import eshop.service.OrderService;
-import eshop.util.OrderNotFoundException;
+import eshop.exception.OrderNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findOrderById(UUID id) throws OrderNotFoundException {
+    public Order findOrderById(UUID id) {
         return orderRepository.findById(id)
             .orElseThrow(() -> new OrderNotFoundException("Order not found"));
     }
@@ -39,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order buildNewOrder(User user, Product product, String address, Integer quantity) {
+    public Order buildOrder(User user, Product product, String address, Integer quantity) {
         return Order.builder()
             .buyer(user)
             .product(product)
@@ -68,14 +68,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void changeOrdersStatus(List<Order> orders) {
+    public void changeOrdersStatusAndSave(List<Order> orders) {
         orders.forEach(p -> {
             p.setOrderStatus(OrderStatus.ORDERING);
             saveOrder(p);
         });
     }
 
-    private Double calculateFinalPrice(Product product ,Integer quantity) {
+    private Long calculateFinalPrice(Product product ,Integer quantity) {
         return product.getPrice() * quantity;
     }
 }

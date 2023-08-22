@@ -1,4 +1,4 @@
-package eshop.service;
+package eshop.util;
 
 import eshop.repository.UserRepository;
 import eshop.security.UserDetails;

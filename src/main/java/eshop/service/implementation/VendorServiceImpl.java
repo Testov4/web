@@ -1,5 +1,6 @@
 package eshop.service.implementation;
 
+import eshop.exception.VendorNotFoundException;
 import eshop.repository.VendorRepository;
 import eshop.model.Vendor;
 import eshop.service.VendorService;
@@ -23,7 +24,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor findVendorById(UUID id) {
-        return vendorRepository.findById(id).orElse(null);
+        return vendorRepository.findById(id).orElseThrow(() -> new VendorNotFoundException("Vendor not found"));
     }
 
     @Override
@@ -41,7 +42,7 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public Boolean isVendorUnique(UUID id, String name) {
         return vendorRepository.findByName(name)
-            .map(product -> product.getId().equals(id))
-            .orElse(true);
+            .filter(vendor -> !vendor.getId().equals(id))
+            .isEmpty();
     }
 }

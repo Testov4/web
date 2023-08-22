@@ -1,8 +1,9 @@
 package eshop.controller;
 
+import eshop.exception.UserNotFoundException;
 import eshop.model.Category;
 import eshop.model.Order;
-import eshop.model.OrderStatus;
+import eshop.util.OrderStatus;
 import eshop.model.Product;
 import eshop.model.User;
 import eshop.model.UserInformation;
@@ -12,10 +13,7 @@ import eshop.service.OrderService;
 import eshop.service.ProductService;
 import eshop.service.UserService;
 import eshop.service.VendorService;
-import eshop.util.OrderNotFoundException;
-import eshop.util.ProductNotFoundException;
 import eshop.util.Role;
-import eshop.util.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -145,14 +143,14 @@ public class AdminController {
     }
 
     @GetMapping("products/delete/{id}")
-    public String deleteProduct(@PathVariable UUID id) throws ProductNotFoundException {
+    public String deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(productService.findProductById(id));
         log.info("product with id {} deleted", id);
         return "redirect:/admin/products";
     }
 
     @GetMapping("products/edit/{id}")
-    public String showProductEditPage(Model model, @PathVariable UUID id) throws ProductNotFoundException {
+    public String showProductEditPage(Model model, @PathVariable UUID id) {
         model.addAttribute("product", productService.findProductById(id));
         model.addAttribute("vendorList", vendorService.findAllVendors());
         model.addAttribute("categoryList", categoryService.findAllSubCategories());
@@ -179,7 +177,7 @@ public class AdminController {
                                 @RequestParam String keyword,
                                 @RequestParam String categoryId) {
         UUID catId = UUID.fromString(categoryId);
-        List<Product> products = productService.findByCategoryAndNamePart(keyword, categoryService.findCategoryById(catId));
+        List<Product> products = productService.findByCategoryAndNameContaining(keyword, categoryService.findCategoryById(catId));
         log.info("found products: {}", products);
         model.addAttribute("products", products);
         model.addAttribute("listCategories", categoryService.findAllCategories());
@@ -193,7 +191,7 @@ public class AdminController {
     }
 
     @GetMapping("vendors/edit/{id}")
-    public String vendorEdit(Model model, @PathVariable UUID id) {
+    public String vendorEdit(Model model, @PathVariable UUID id) throws UserNotFoundException {
         model.addAttribute("vendor", vendorService.findVendorById(id));
         return "admin/vendor/vendor_form";
     }
@@ -212,7 +210,7 @@ public class AdminController {
     }
 
     @GetMapping("vendors/delete/{id}")
-    public String deleteVendor(@PathVariable UUID id) {
+    public String deleteVendor(@PathVariable UUID id) throws UserNotFoundException {
         vendorService.deleteVendor(vendorService.findVendorById(id));
         log.info("vendor with id {} deleted", id);
         return "redirect:/admin/vendors";
@@ -225,21 +223,21 @@ public class AdminController {
     }
 
     @GetMapping("orders/delete/{id}")
-    public String deleteOrder(@PathVariable UUID id) throws OrderNotFoundException {
+    public String deleteOrder(@PathVariable UUID id) {
         orderService.deleteOrder(orderService.findOrderById(id));
         log.info("order with id {} deleted", id);
         return "redirect:/admin/orders";
     }
 
     @GetMapping("orders/edit/{id}")
-    public String orderEdit(Model model, @PathVariable UUID id) throws OrderNotFoundException {
+    public String orderEdit(Model model, @PathVariable UUID id) {
         model.addAttribute("order", orderService.findOrderById(id));
         model.addAttribute("OrderStatus", OrderStatus.values());
         return "admin/orders/order_form";
     }
 
     @PostMapping("orders/save")
-    public String orderSave(@ModelAttribute Order order) throws OrderNotFoundException {
+    public String orderSave(@ModelAttribute Order order) {
         order.setQuantity(orderService.findOrderById(order.getId()).getQuantity());
         order.setProduct(orderService.findOrderById(order.getId()).getProduct());
         orderService.saveOrder(order);

@@ -3,8 +3,8 @@ package eshop.repository;
 import eshop.model.Category;
 import eshop.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,5 +17,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     Optional<Product> findByName(String name);
 
-    Optional<Product> findByNameIsAndIdNot(String name, UUID id);
+    @Query(nativeQuery=true, value="SELECT * FROM product ORDER BY random() LIMIT 4")
+    List<Product> findFourRandomProducts();
 }

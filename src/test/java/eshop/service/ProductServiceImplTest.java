@@ -5,19 +5,17 @@ import eshop.model.Product;
 import eshop.repository.ProductRepository;
 import eshop.service.implementation.ProductServiceImpl;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.MockitoAnnotations;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@ExtendWith(MockitoExtension.class)
 public class ProductServiceImplTest {
     @Mock
     private ProductRepository productRepository;
@@ -25,9 +23,43 @@ public class ProductServiceImplTest {
     @InjectMocks
     private ProductServiceImpl productService;
 
+    static List<Product> products;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @BeforeEach
+    private void getProducts() {
+        Category category1 = Category.builder()
+            .name("test_category1")
+            .build();
+        Category category2 = Category.builder()
+            .name("test_category2")
+            .build();
+
+        products = List.of(
+            Product.builder()
+                .id(UUID.randomUUID())
+                .name("test_name1")
+                .category(category1)
+                .build(),
+            Product.builder()
+                .id(UUID.randomUUID())
+                .name("test_name2")
+                .category(category1)
+                .build(),
+            Product.builder()
+                .id(UUID.randomUUID())
+                .name("test_name3")
+                .category(category2)
+                .build()
+        );
+    }
+
     @Test
-    public void shouldReturnTrue() {
-        List<Product> products = getProducts();
+    public void shouldReturnTrueWhenNameIsNotFound() {
         UUID id = UUID.randomUUID();
         String name = "wrong_test_name";
 
@@ -36,12 +68,11 @@ public class ProductServiceImplTest {
 
         Boolean result = productService.isProductUnique(id, name);
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(true, result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void shouldReturnTrueWhenNameIsAlreadyInListButSameId() {
-        List<Product> products = getProducts();
         UUID id = products.get(0).getId();
         String name = products.get(0).getName();
 
@@ -53,12 +84,11 @@ public class ProductServiceImplTest {
 
         Boolean result = productService.isProductUnique(id, name);
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(true, result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     public void shouldReturnFalseWhenNameIsAlreadyInListAndRandomId() {
-        List<Product> products = getProducts();
         UUID id = UUID.randomUUID();
         String name = products.get(0).getName();
 
@@ -70,12 +100,11 @@ public class ProductServiceImplTest {
 
         Boolean result = productService.isProductUnique(id, name);
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(false, result);
+        Assertions.assertFalse(result);
     }
 
     @Test
     public void shouldReturnEmptyListIfNameNotContains() {
-        List<Product> products = getProducts();
         String name = "wrong";
         Category category = products.get(0).getCategory();
 
@@ -85,14 +114,13 @@ public class ProductServiceImplTest {
                 .filter(product -> product.getName().contains(name))
                 .collect(Collectors.toList()));
 
-        List<Product> result = productService.findByCategoryAndNamePart(name, category);
+        List<Product> result = productService.findByCategoryAndNameContaining(name, category);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(Collections.emptyList(), result);
     }
 
     @Test
     public void shouldReturnEmptyListIfNotCorrectCategoryPassed() {
-        List<Product> products = getProducts();
         String name = "test";
         Category category = Category.builder().name("wrong_category").build();
 
@@ -102,14 +130,29 @@ public class ProductServiceImplTest {
                 .filter(product -> product.getName().contains(name))
                 .collect(Collectors.toList()));
 
-        List<Product> result = productService.findByCategoryAndNamePart(name, category);
+        List<Product> result = productService.findByCategoryAndNameContaining(name, category);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(Collections.emptyList(), result);
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfCategoryIsNull() {
+        String name = "test";
+        Category category = null;
+
+        Mockito.when(productRepository.findByNameContaining(name)).
+            thenReturn(products
+                .stream()
+                .filter(product -> product.getName().contains(name))
+                .collect(Collectors.toList()));
+
+        List<Product> result = productService.findByCategoryAndNameContaining(name, category);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(Collections.emptyList(), result);
     }
 
     @Test
     public void shouldReturnCorrectProducts() {
-        List<Product> products = getProducts();
         String name = "test";
         Category category = products.get(0).getCategory();
 
@@ -119,32 +162,10 @@ public class ProductServiceImplTest {
                 .filter(product -> product.getName().contains(name))
                 .collect(Collectors.toList()));
 
-        List<Product> result = productService.findByCategoryAndNamePart(name, category);
+        List<Product> result = productService.findByCategoryAndNameContaining(name, category);
         Assertions.assertNotNull(result);
         Assertions.assertFalse(result.isEmpty());
         Assertions.assertEquals(2, result.size());
-    }
-
-    private List<Product> getProducts() {
-        Category category1 = Category.builder().name("test_category1").build();
-        Category category2 = Category.builder().name("test_category2").build();
-
-        Product firstProduct = Product.builder()
-            .id(UUID.randomUUID())
-            .name("test_name1")
-            .category(category1)
-            .build();
-        Product secondProduct = Product.builder()
-            .id(UUID.randomUUID())
-            .name("test_name2")
-            .category(category1)
-            .build();
-        Product thirdProduct = Product.builder()
-            .id(UUID.randomUUID())
-            .name("test_name3")
-            .category(category2)
-            .build();
-        return List.of(firstProduct, secondProduct, thirdProduct);
     }
 
 }

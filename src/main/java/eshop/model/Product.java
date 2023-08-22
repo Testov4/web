@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,7 +36,7 @@ public class Product {
     private String name;
 
     @Column(name = "price")
-    private Double price;
+    private Long price;
 
     @Column(name = "imageurl")
     private String imageURL;

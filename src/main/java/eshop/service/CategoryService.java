@@ -1,8 +1,7 @@
 package eshop.service;
 
 import eshop.model.Category;
-import eshop.util.CategoryNotFoundException;
-
+import eshop.exception.CategoryNotFoundException;
 import java.util.List;
 import java.util.UUID;
 

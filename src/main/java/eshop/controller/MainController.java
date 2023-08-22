@@ -9,14 +9,13 @@ import eshop.model.User;
 import eshop.model.UserInformation;
 import eshop.service.ProductService;
 import eshop.util.Role;
-import eshop.util.UserNotFoundException;
+import eshop.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
@@ -59,7 +58,7 @@ public class MainController {
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("listCategories", categoryService.findMainCategories());
-        model.addAttribute("listProducts", productService.findRandomProducts(4));
+        model.addAttribute("listProducts", productService.findRandomProducts());
         return "index";
     }
 
@@ -76,9 +75,9 @@ public class MainController {
         if (bindingResult.hasErrors()) {
             return "/registration";
         }
-        log.info("user {}", user);
 
-        log.info("userInf {}", userInformation);
+        log.info("new user {}", user);
+        log.info("new userInformation {}", userInformation);
         user.setRole(Role.USER);
         user.setUserInformation(userInformation);
         userInformation.setUser(user);
@@ -91,7 +90,7 @@ public class MainController {
     @GetMapping("/search")
     public String searchProductsByKeyword(HttpServletRequest request, Model model) {
         String keyword = request.getParameter("keyword");
-        List<Product> products = productService.findByNamePart(keyword);
+        List<Product> products = productService.findByNameContaining(keyword);
         log.info("found products by part of the name: {}", products);
 
         model.addAttribute("totalItems",products.size());
@@ -102,7 +101,7 @@ public class MainController {
     @GetMapping("/payment")
     public String paymentForAllUsersOrders() {
         User user = userService.getCurrentUser();
-        orderService.changeOrdersStatus(user.getOrders());
+        orderService.changeOrdersStatusAndSave(user.getOrders());
         return "redirect:/user/orders";
     }
 }

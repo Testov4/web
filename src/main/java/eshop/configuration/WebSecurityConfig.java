@@ -1,6 +1,6 @@
 package eshop.configuration;
 
-import eshop.service.MyUserDetailsService;
+import eshop.util.MyUserDetailsService;
 import eshop.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
